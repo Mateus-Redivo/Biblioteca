@@ -1,0 +1,751 @@
+/* 
+Logins para teste irão ser impressos no inicio do programa para facilitar
+*/
+
+//__________________________________________________________//
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
+#include <unistd.h>
+
+using namespace std;
+//_________________________STRUCTS_________________________//
+struct livros{
+int categoria, id_livro;
+string nome;
+};
+
+struct usuarios{
+int id_cargo, cpf;
+string nome;
+};
+
+struct emprestimos{
+string pessoa, nome_livro;
+int saida_dia, saida_mes, saida_ano, cpf, id_livro;
+int vencimento_dia, vencimento_mes, vencimento_ano;
+};
+
+//_________________________________________________________//
+
+//_______________________VERIFICAÇÕES______________________//
+bool verifica_usuario (int cpf){
+
+  usuarios verifica;
+  
+  ifstream arquivo("usuarios.txt");
+    while(arquivo >>verifica.nome>>verifica.cpf>>verifica.id_cargo)
+      {
+        if(verifica.cpf == cpf)
+        {
+          return true;
+          break;
+        }
+      }
+    return false;
+    arquivo.close();
+};
+
+bool verifica_livro (int id){
+  
+  livros verifica;
+  
+  ifstream arquivo("livros.txt");
+    while(arquivo >>verifica.nome>>verifica.categoria>>verifica.id_livro)
+      {
+        if(verifica.id_livro == id)
+        {
+          return true;
+          break;
+        }
+      }
+    return false;
+    arquivo.close();
+};
+
+//____________________________________________________//
+
+//_______________________ALUNOS______________________//
+void buscar_livros(){
+  system("clear");
+  
+  ifstream arquivo("livros.txt");
+
+  livros tmp, verifica;
+  
+  cout<<"Informe o nome do livro: ";
+  cin>>tmp.nome;
+    
+  while(arquivo>> verifica.nome >> verifica.categoria >> verifica.id_livro)
+    {
+      if(verifica.nome == tmp.nome)
+      {
+        system("clear");
+        cout<<"Livro encontrado"<<endl;
+        cout<<"Nome do livro:"<< verifica.nome<<endl;
+        cout<<"Categoria: "<< verifica.categoria<<endl;
+        cout<<"ID unico do livro: "<<verifica.id_livro<<endl;
+        break;
+      };
+    };
+  arquivo.close();
+};
+
+void livros_emprestados(){
+  system("clear");
+  usuarios tmp, login;
+  cout<<"Informe os 4 primeiros digitos do seu cpf: ";
+  cin>>login.cpf;
+
+  system("clear");
+  
+  ifstream arquivo("emprestimos.txt");
+  while(arquivo >>tmp.cpf>>tmp.nome>>tmp.id_cargo)
+  {
+    if(tmp.cpf == login.cpf)
+    {
+      cout<<"Você está com o livro de ID: "<< tmp.id_cargo<<endl;
+    }
+  }
+  cout<<"Consulte o bibliotecário(a) para saber as datas de entrega, caso tenha equecido"<<endl;
+};
+
+//_________________________________________________________//
+
+//_______________________FUNCIONÁRIOS______________________//
+void consulta_emprestimos(){
+  system("clear");
+  ifstream arquivo;
+  cout<<"\ncpf aluno       |        nome do livro         |     id do livro       ";
+  cout<<"\ndia entrada     |         mes entrada          |     ano entrada       ";
+  cout<<"\ndia saida       |          mes saida           |      ano saida       ";
+  arquivo.open("emprestimos.txt");
+  string linha;
+  while(getline(arquivo,linha))
+    {
+      cout<<linha<<endl<<endl;
+    }
+  arquivo.close();
+};
+
+void alteracoes_emprestimos(){
+  system("clear");
+  emprestimos dados;
+
+  cout<<"4 primeiros dígitos do cpf do aluno: "<<endl;
+  cin>>dados.cpf;
+  
+  if (verifica_usuario (dados.cpf))
+  {
+    cout<<"Aluno encontrado.\n";
+  }
+  else
+  {
+    alteracoes_emprestimos();
+  }
+    cout<<"nome do livro: ";
+    cin>>dados.nome_livro;
+    cout<<"ID do livro: "<<endl;
+    cin>>dados.id_livro;
+  
+    if (verifica_livro (dados.id_livro))
+    {
+      cout<<"Livro encontrado\n";
+    }
+    else
+    {
+      alteracoes_emprestimos();
+    }
+  
+    cout<<"\n-------Data do empréstimo-------\n";
+    cout<<"\ndia: "<<endl;
+    cin>>dados.saida_dia;
+    cout<<"mes: "<<endl;
+    cin>>dados.saida_mes;
+    cout<<"ano: "<<endl;
+    cin>>dados.saida_ano;
+
+    cout<<"\n-------Data da devolução:-------\n";
+    cin>>dados.vencimento_dia;
+    cout<<"mes: "<<endl;
+    cin>>dados.vencimento_mes;
+    cout<<"ano: "<<endl;
+    cin>>dados.vencimento_ano;
+    ofstream arquivo("emprestimos.txt"); 
+      
+          arquivo<<endl <<endl << dados.cpf <<"     "<<dados.nome_livro <<"     "<< dados.id_livro <<endl;
+          arquivo<<dados.saida_dia<<"     "<< dados.saida_mes <<"     "<< dados.saida_ano<<endl;
+          arquivo<<dados.vencimento_dia<<"     "<< dados.vencimento_mes <<"     "<< dados.vencimento_ano<<endl; 
+
+          arquivo.close();
+          system("clear");
+};
+
+void cadastrar_livros(){
+  system("clear");
+  livros temp, verifica;
+  int i = 0;
+  
+  cout<<"Informe o nome do livro: "<<endl;
+  cin>>temp.nome;
+  
+  cout<<"Selecione o a categoria do livro: "<<endl;
+  cout<<"1-Romance "<<endl;
+  cout<<"2-Aventura "<<endl;
+  cout<<"3-Ficção científica "<<endl;
+  cout<<"4-Didático "<<endl;
+  cout<<"5-Infantil "<<endl;
+  cout<<"6-Mistério "<<endl;
+  cout<<"7-Fantasia "<<endl;
+  cout<<"8-Biografia "<<endl;
+  cout<<"9-Científico "<<endl;
+  cout<<"10-Teológico "<<endl;
+  cout<<"11-Auto Ajuda "<<endl;
+  cout<<"Categoria: "<<endl;
+  cin>>temp.categoria;
+  
+  temp.id_livro = temp.nome.length()+ temp.categoria;
+
+  ifstream arquivo ("livros.txt");
+  while(arquivo >> verifica.nome >> verifica.categoria >> verifica.id_livro )
+    {
+      if (verifica.id_livro == temp.id_livro)
+      {
+        temp.id_livro++;
+      }
+    }
+  arquivo.close();
+
+  ofstream tmp("livros.txt", ios::app);
+  tmp<< temp.nome <<"   "<<temp.categoria<<"   "<<temp.id_livro<<endl;
+  tmp.close();
+};
+
+void consulta_livros(){
+  system("clear");
+  cout<<"nome do livro      |   categoria do livro   | ID único do livro"<<endl;
+  ifstream arquivo;
+  arquivo.open("livros.txt");
+  string linha;
+  while(getline(arquivo,linha))
+    {
+      cout<<endl<<linha<<endl;
+    }
+  arquivo.close();
+};
+
+void excluir_livros(int id){
+  system("clear");
+  ifstream arquivo("livros.txt");
+	if(!arquivo.is_open()){
+		cout << "Falha ao abrir ao abrir o arquivo" << endl;
+		return;
+	}
+	ofstream temp("temp.txt");
+	livros tmp;
+	while(arquivo >> tmp.nome >> tmp.categoria >> tmp.id_livro){
+		if(id != tmp.id_livro){	
+			temp << tmp.nome << " " << tmp.categoria << " " << tmp.id_livro << endl;
+		}
+	}
+	arquivo.close();
+	temp.close();
+	remove("livros.txt");
+	rename("temp.txt", "livros.txt");
+};
+
+void imprimir_usuarios_func(){
+  system("clear");
+  ifstream arquivo("usuarios.txt");
+  usuarios tmp;
+  while(arquivo >> tmp.nome >> tmp.cpf >> tmp.id_cargo){
+    if(tmp.id_cargo == 1)
+    {
+    cout<<tmp.nome<<" "<<tmp.cpf<<endl;
+    }
+  }
+  arquivo.close();
+};
+
+void editar_livros(int id, int nova_categoria, string novo_nome){
+  system("clear");
+  ifstream arquivo("livros.txt");
+	if(!arquivo.is_open()){
+		cout << "Falha ao abrir ao abrir o arquivo" << endl;
+		return;
+	}
+  ofstream temp("temp.txt");
+	livros tmp;
+	while(arquivo >> tmp.nome >> tmp.categoria >> tmp.id_livro){
+		if(id == tmp.id_livro){
+			temp << novo_nome << " " << nova_categoria << " " << id << endl;
+		}
+		else{
+			temp << tmp.nome << " " << tmp.categoria << " " << tmp.id_livro << endl;
+		}
+	}
+	arquivo.close();
+	temp.close();
+	remove("livros.txt");
+	rename("temp.txt", "livros.txt");	
+}
+//__________________________________________________________//
+
+//______________________ADMINISTRADOR_______________________//
+
+void criar_usuarios(){
+  system("clear");
+  usuarios temp;
+  ofstream arquivo("usuarios.txt", ios::app);
+  cout<<"Informe o nome do usuário: ";
+  cin>>temp.nome;
+  cout<<"Informe os 4 primeiros digitos do cpf (será usado como senha): ";
+  cin>>temp.cpf;
+  cout<<"Informe o cargo do novo usuário: ";
+  cout<<"\n1- Aluno";
+  cout<<"\n2- Funcionário";
+  cout<<"\n3- Administrador";
+  cout<<"\nOpção: ";
+  cin>>temp.id_cargo;
+  arquivo << temp.nome <<" "<<temp.cpf<<" "<<temp.id_cargo<< endl;
+  arquivo.close();
+  cout<<"Usuário cadastrado com sucesso!!\n\n";
+};
+
+void imprimir_usuarios(){ 
+  system("clear");
+  cout<<"nome        |     cpf      |        cargo"<<endl;
+  ifstream arquivo;
+  arquivo.open("usuarios.txt");
+  string linha;
+  while(getline(arquivo,linha))
+    {
+      cout<<endl<<linha<<endl;
+    }
+  cout<<endl;
+  arquivo.close();
+};
+
+void editar_cargo( int cpf, int novo_cargo){
+system("clear");
+ifstream arquivo("usuarios.txt");
+	if(!arquivo.is_open()){
+		cout << "Falha ao abrir ao abrir o arquivo" << endl;
+		return;
+	}
+  ofstream temp("temp.txt");
+	usuarios tmp;
+	while(arquivo >> tmp.nome >> tmp.cpf >> tmp.id_cargo){
+		if(cpf == tmp.cpf){
+			temp << tmp.nome << " " << tmp.cpf << " " << novo_cargo << endl;
+		}
+		else{
+			temp << tmp.nome << " " << tmp.cpf << " " << tmp.id_cargo << endl;
+		}
+	}
+	arquivo.close();
+	temp.close();
+	remove("usuarios.txt");
+	rename("temp.txt", "usuarios.txt");	
+};
+
+void editar_nome(string novo_nome, int cpf){
+  system("clear");
+  ifstream arquivo("usuarios.txt");
+	if(!arquivo.is_open()){
+		cout << "Falha ao abrir ao abrir o arquivo" << endl;
+		return;
+	}
+  ofstream temp("temp.txt");
+	usuarios tmp;
+	while(arquivo >> tmp.nome >> tmp.cpf >> tmp.id_cargo){
+		if(cpf == tmp.cpf){
+			temp << novo_nome << " " << tmp.cpf << " " << tmp.id_cargo << endl;
+		}
+		else{
+			temp << tmp.nome << " " << tmp.cpf << " " << tmp.id_cargo << endl;
+		}
+	}
+	arquivo.close();
+	temp.close();
+	remove("usuarios.txt");
+	rename("temp.txt", "usuarios.txt");	
+};
+
+void editar_cpf(int cpf, int novo_cpf){
+  system("clear");
+  ifstream arquivo("usuarios.txt");
+	if(!arquivo.is_open()){
+		cout << "Falha ao abrir ao abrir o arquivo" << endl;
+		return;
+	}
+  ofstream temp("temp.txt");
+	usuarios tmp;
+	while(arquivo >> tmp.nome >> tmp.cpf >> tmp.id_cargo){
+		if(cpf == tmp.cpf){
+			temp << tmp.nome << " " << novo_cpf << " " << tmp.id_cargo << endl;
+		}
+		else{
+			temp << tmp.nome << " " << tmp.cpf << " " << tmp.id_cargo << endl;
+		}
+	}
+	arquivo.close();
+	temp.close();
+	remove("usuarios.txt");
+	rename("temp.txt", "usuarios.txt");	
+};
+
+void excluir_usuarios(int cpf){
+  system("clear");
+  ifstream arquivo("usuarios.txt");
+	if(!arquivo.is_open()){
+		cout << "Falha ao abrir ao abrir o arquivo" << endl;
+		return;
+	}
+	ofstream temp("temp.txt");
+	usuarios tmp;
+	while(arquivo >> tmp.nome >> tmp.cpf >> tmp.id_cargo){
+		if(tmp.cpf != cpf){	
+			temp << tmp.nome << " " << tmp.cpf << " " << tmp.id_cargo << endl;
+		}
+	}
+	arquivo.close();
+	temp.close();
+	remove("usuarios.txt");
+	rename("temp.txt", "usuarios.txt");	
+};
+//_________________________________________________________//
+
+//________________________MENUS____________________________//
+void menu_aluno(){
+  int op;
+  do{
+  cout<<"\n_________Biblioteca da UEMG_________"<<endl;
+  cout<<"-------------Menu Aluno-------------"<<endl;
+  cout<<"1- consultar livros da biblioteca"<<endl;
+  cout<<"2- buscar livro"<<endl;
+  cout<<"3- livros comigo"<<endl;
+  cout<<"0- sair"<<endl;
+  cout<<"Opção: ";
+  cin>>op;
+  switch(op)
+    {
+    case 1:
+      {
+        consulta_livros();
+        break;
+      }
+    
+    case 2:
+      {
+        buscar_livros();
+        break;
+      }
+      
+    case 3:
+      {
+        livros_emprestados();
+        break;
+      }
+      
+    default:
+      {
+        cout<<"opção inválida!! digite novamente\n";
+        break;
+      }
+
+    }
+  }while(op!=0);
+};
+
+void menu_funcionario(){
+  int op;
+  do {
+    
+  cout<<"\n_________Biblioteca da UEMG_________"<<endl;
+  cout<<"----------Menu Funcionário---------"<<endl;
+  cout<<"1- consultar livros"<<endl;
+  cout<<"2- consultar alunos"<<endl;
+  cout<<"3- cadastrar livros"<<endl;
+  cout<<"4- buscar um livro"<<endl;
+  cout<<"5- alterar livros"<<endl;
+  cout<<"6- excluir livros"<<endl;
+  cout<<"7- fazer empréstimo de livro"<<endl;
+  cout<<"8- consultar empréstimos"<<endl;
+  cout<<"0 -sair"<<endl;
+  cout<<"Opção: ";
+  cin>>op;
+    
+  
+    
+  switch(op)
+    {
+      case 1:
+      {
+      consulta_livros();
+      break;
+      }
+      
+      case 2:
+      {
+      imprimir_usuarios_func();
+      break;
+      }
+      
+      case 3:
+      {
+      cadastrar_livros();
+          
+      break;
+      }
+      case 4:
+      {
+      buscar_livros();
+      break;
+      }
+      case 5:
+      {
+      livros alt;
+        
+      cout<<endl;
+      consulta_livros();
+      
+      cout<<"\nInforme o id do livro que deseja alterar: ";
+      cin>>alt.id_livro;
+      cout<<"Informe o novo nome: ";
+      cin>>alt.nome;
+      cout<<"Informe a nova categoria: "<<endl;
+      cout<<"1-Romance "<<endl;
+      cout<<"2-Aventura "<<endl;
+      cout<<"3-Ficção científica "<<endl;
+      cout<<"4-Didático "<<endl;
+      cout<<"5-Infantil "<<endl;
+      cout<<"6-Mistério "<<endl;
+      cout<<"7-Fantasia "<<endl;
+      cout<<"8-Biografia "<<endl;
+      cout<<"9-Científico "<<endl;
+      cout<<"10-Teológico "<<endl;
+      cout<<"11-Auto Ajuda "<<endl;
+      cout<<"Opção: "<<endl;
+      cin>>alt.categoria;
+
+      editar_livros(alt.id_livro, alt.categoria, alt.nome);
+      
+          
+      break;
+      }
+      
+      case 6:
+      {
+      livros del;
+
+      cout<<endl;
+      consulta_livros();
+        
+      cout<<"Informe o id do livro que deseja excluir: "<<endl;
+      cin>>del.id_livro;
+      excluir_livros(del.id_livro);  
+      break;
+      }
+      
+      case 7:
+      {
+      alteracoes_emprestimos();
+      break;
+      }
+
+      case 8:
+      {
+      consulta_emprestimos();
+      break;
+      }
+    
+      default:
+      {
+        cout<<"Informe uma opção válida"<<endl;
+        break;
+      }
+    }
+    }while(op!=0);
+  };
+
+void menu_administrador(){
+  system("clear");
+  int op;
+  do{
+  cout<<"\n_________Biblioteca da UEMG_________"<<endl;
+  cout<<"---------Menu Administrador---------"<<endl;
+  cout<<"1- listar usuários"<<endl;
+  cout<<"2- criar usuarios"<<endl;
+  cout<<"3- editar usuarios"<<endl;
+  cout<<"4- excluir usuarios"<<endl;
+  cout<<"0 -sair"<<endl;
+  cout<<"Opção: ";
+  cin>>op;
+  switch(op)
+    {
+    case 1:
+      {  
+        imprimir_usuarios();
+        break;
+      }
+    case 2:
+    {
+      criar_usuarios();
+      break;
+    }
+    case 3:
+    {
+      system("clear");
+      string nome, novo_nome;
+			int novo_cpf, cpf, novo_cargo,alt,cargo;
+      cout<<"O que será alterado? ";
+      cout<<"\n1- Nome";
+      cout<<"\n2- CPF";
+      cout<<"\n3- Cargo";
+      cout<<"\nOpção: ";
+      cin>>alt;
+      switch(alt)
+      {
+        case 1:
+          {
+            system("clear");
+            imprimir_usuarios();
+            cout<<endl;
+      			cout << "Qual os 4 digitos do cpf? ";
+      			cin >> cpf;
+            cout<<"Informe novo nome: ";
+            cin>>novo_nome;
+      			editar_nome(novo_nome, cpf);
+            break;
+
+            
+          }
+        
+        case 2:
+          {
+            system("clear");
+            
+            imprimir_usuarios();
+            cout<<endl;
+            cout<<"Qual o cpf atual?";
+            cin>>cpf;
+      			cout << "Qual os novos 4 digitos do cpf? ";
+      			cin >> novo_cpf;
+      			editar_cpf(cpf, novo_cpf);
+            break;
+          }
+
+        case 3:
+          {
+            system("clear");
+            imprimir_usuarios();
+            cout<<endl;
+      			cout << "Qual os 4 digitos do cpf? ";
+      			cin >> cpf;
+            cout<<"Informe novo cargo: ";
+            cin>>novo_cargo;
+      			editar_cargo(cpf, novo_cargo);
+            break;
+          }
+        }
+      break;
+      }
+      
+    case 4:
+    {
+      int cpf;
+      system("clear");
+      imprimir_usuarios();
+      cout<<"Informe o cpf da pessoa que deseja excluir: ";
+      cin>>cpf;
+      excluir_usuarios(cpf);
+      break;
+    }
+  }
+  }while(op!=0);
+};
+
+int login(){
+  int op;
+  cout<<"Logins para o teste: ";
+  cout<<" ADM  1111";
+  cout<<" / FUNC 2222";
+  cout<<" / ALUN 3333"<<endl;
+  cout<<"1- logar no sistema"<<endl;
+  cout<<"0- fechar o sistema"<<endl;
+  cout<<"Opção: ";
+  cin>>op;
+  if(op == 0)
+  {
+    return 0;
+  }
+  else if(op == 1)
+  {
+    usuarios entrada, verifica;
+    cout<<"\n\nInforme seu Login: ";
+    cin>>entrada.nome;
+    cout<<"Informe sua senha: ";
+    cin>>entrada.cpf;
+    ifstream arquivo("usuarios.txt");
+    while(arquivo >>verifica.nome>>verifica.cpf>>verifica.id_cargo)
+      {
+        if(entrada.nome == verifica.nome && entrada.cpf == verifica.cpf)
+        {
+          return verifica.id_cargo;
+          arquivo.close();
+        }
+      }
+    arquivo.close();
+  }
+  else
+  {
+    system("clear");
+    cout<<"\nDigite uma opção válida!!"<<endl<<endl;
+    login();
+  }
+  return -1;
+};
+//________________________MAIN_____________________________//
+int main(){
+  int op = 1;
+  do
+  {
+  system("clear");
+  op = login();
+  switch (op)
+  { 
+    case 0:
+      {
+        system("clear");
+        cout<<"Obrigado por utilizar o programa"<<endl;
+        cout<<"Saindo...";
+        break;
+      }
+    case 1:
+      {
+        system("clear");
+        menu_aluno();
+        break;
+      }
+    case 2:
+      {
+        system("clear");
+        menu_funcionario();
+        break;
+      }
+    case 3:
+      {
+        system("clear");
+        menu_administrador();
+        break;
+      }
+    default:
+      {
+        cout<<"\nDigite os dados novamente!!\n";
+        break;
+      }
+  }
+}
+  while (op!=0);
+}
