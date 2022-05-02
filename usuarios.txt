@@ -1,0 +1,9 @@
+aluno 6677 1
+aluno2 4569 1
+funci1 1235 2
+mateus 5139 3
+henry 1122 3
+func 4758 2
+ADM 1111 3
+FUNC 2222 2
+ALUN 3333 1

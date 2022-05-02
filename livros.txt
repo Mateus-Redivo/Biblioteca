@@ -1,0 +1,11 @@
+Aurora 1 7
+Duna 2 6
+I,robot 3 10
+Matemática 4 15
+A_turma_da_monica 5 22
+O_nome_do_vento 6 21
+Coom_treinar_seu_dragão 7 31
+Eu_sou_malala 8 22
+Kosmos 9 16
+Mero_cristianismo 10 27
+A_coragem_de_ser_imperfeito 11 38
